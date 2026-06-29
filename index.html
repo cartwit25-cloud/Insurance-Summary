@@ -773,54 +773,80 @@ function drawPie(active){
 
 async function exportPDF(){
   const { jsPDF } = window.jspdf;
-  const target = document.getElementById('resultView');
+  const clientName = val('clientName') || '客戶';
 
-  // hide buttons during capture
-  const actionRow = target.querySelector('.action-row');
+  // 建立一個包含標題+內容的臨時容器，全部用 html2canvas 截圖，完全不用 jsPDF 的文字
+  const resultView = document.getElementById('resultView');
+  const actionRow  = resultView.querySelector('.action-row');
   actionRow.style.display = 'none';
 
-  const canvas = await html2canvas(target, {
+  // 建立臨時 wrapper
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = `
+    position:fixed; left:-9999px; top:0;
+    width:${resultView.offsetWidth}px;
+    background:#f7f6f2;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    padding: 0;
+  `;
+
+  // 標題列
+  const titleDiv = document.createElement('div');
+  titleDiv.style.cssText = `
+    padding: 14px 0 10px 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #2a2a27;
+    border-bottom: 1px solid #c8c8c4;
+    margin-bottom: 14px;
+  `;
+  titleDiv.textContent = clientName + ' 的保單匯總報告';
+
+  // clone resultView content
+  const clone = resultView.cloneNode(true);
+  clone.style.padding = '0';
+  // hide action row inside clone too
+  const cloneAction = clone.querySelector('.action-row');
+  if (cloneAction) cloneAction.style.display = 'none';
+
+  wrapper.appendChild(titleDiv);
+  wrapper.appendChild(clone);
+  document.body.appendChild(wrapper);
+
+  // 重新繪製 pie chart 到 clone 的 canvas（html2canvas 無法截 canvas 內容）
+  const origCanvas = document.getElementById('pieChart');
+  const cloneCanvas = clone.querySelector('#pieChart');
+  if (origCanvas && cloneCanvas) {
+    cloneCanvas.width  = origCanvas.width;
+    cloneCanvas.height = origCanvas.height;
+    cloneCanvas.style.width  = origCanvas.style.width;
+    cloneCanvas.style.height = origCanvas.style.height;
+    cloneCanvas.getContext('2d').drawImage(origCanvas, 0, 0);
+  }
+
+  const canvas = await html2canvas(wrapper, {
     scale: 2,
     useCORS: true,
     backgroundColor: '#f7f6f2',
     logging: false,
   });
 
+  document.body.removeChild(wrapper);
   actionRow.style.display = '';
 
+  // 放入 A4 PDF
   const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
   const pageW = 210, pageH = 297;
   const margin = 14;
-  const titleH = 10;
-  const gap = 5;
-
   const availW = pageW - margin * 2;
-  const availH = pageH - margin * 2 - titleH - gap;
-
+  const availH = pageH - margin * 2;
   const imgRatio = canvas.height / canvas.width;
-  const imgW = availW;
-  const imgH = imgRatio * imgW;
+  const imgH = imgRatio * availW;
   const finalH = Math.min(imgH, availH);
-  const finalW = (finalH / imgH) * imgW;
+  const finalW = (finalH / imgH) * availW;
   const xOffset = margin + (availW - finalW) / 2;
-  const yContent = margin + titleH + gap;
 
-  // title
-  const clientName = val('clientName') || '客戶';
-  pdf.setFont('helvetica', 'bold');
-  pdf.setFontSize(13);
-  pdf.setTextColor(42, 42, 39);
-  pdf.text(clientName + ' 的保單匯總報告', margin, margin + titleH - 2);
-
-  // divider
-  pdf.setDrawColor(200, 200, 196);
-  pdf.setLineWidth(0.3);
-  pdf.line(margin, margin + titleH, pageW - margin, margin + titleH);
-
-  // content
-  const imgData = canvas.toDataURL('image/png');
-  pdf.addImage(imgData, 'PNG', xOffset, yContent, finalW, finalH);
-
+  pdf.addImage(canvas.toDataURL('image/png'), 'PNG', xOffset, margin, finalW, finalH);
   pdf.save(clientName + '的保單匯總報告.pdf');
 }
 </script>
