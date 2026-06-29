@@ -762,7 +762,7 @@ async function exportPDF(){
   const { jsPDF } = window.jspdf;
   const target = document.getElementById('resultView');
 
-  // temporarily hide action buttons while capturing
+  // hide buttons during capture
   const actionRow = target.querySelector('.action-row');
   actionRow.style.display = 'none';
 
@@ -775,21 +775,40 @@ async function exportPDF(){
 
   actionRow.style.display = '';
 
-  const imgW = 210; // A4 width in mm
-  const imgH = (canvas.height / canvas.width) * imgW;
-  const pageH = 297; // A4 height in mm
+  const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+  const pageW = 210, pageH = 297;
+  const margin = 14;
+  const titleH = 10;
+  const gap = 5;
 
-  const pdf = new jsPDF({ orientation: imgH > pageH ? 'p' : 'p', unit: 'mm', format: 'a4' });
-  const imgData = canvas.toDataURL('image/png');
+  const availW = pageW - margin * 2;
+  const availH = pageH - margin * 2 - titleH - gap;
 
-  // if content taller than A4, scale to fit; otherwise centre vertically
-  const finalH = Math.min(imgH, pageH - 20);
+  const imgRatio = canvas.height / canvas.width;
+  const imgW = availW;
+  const imgH = imgRatio * imgW;
+  const finalH = Math.min(imgH, availH);
   const finalW = (finalH / imgH) * imgW;
-  const xOffset = (210 - finalW) / 2;
-  const yOffset = 10;
+  const xOffset = margin + (availW - finalW) / 2;
+  const yContent = margin + titleH + gap;
 
-  pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalW, finalH);
-  pdf.save('保障卡片_' + (val('clientName') || '客戶') + '.pdf');
+  // title
+  const clientName = val('clientName') || '客戶';
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(13);
+  pdf.setTextColor(42, 42, 39);
+  pdf.text(clientName + ' 的保單匯總報告', margin, margin + titleH - 2);
+
+  // divider
+  pdf.setDrawColor(200, 200, 196);
+  pdf.setLineWidth(0.3);
+  pdf.line(margin, margin + titleH, pageW - margin, margin + titleH);
+
+  // content
+  const imgData = canvas.toDataURL('image/png');
+  pdf.addImage(imgData, 'PNG', xOffset, yContent, finalW, finalH);
+
+  pdf.save(clientName + '的保單匯總報告.pdf');
 }
 </script>
 </body>
