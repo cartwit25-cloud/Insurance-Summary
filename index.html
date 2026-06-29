@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>保障建議書轉換</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.4.0/dist/tabler-icons.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -24,7 +26,7 @@ body {
   background: var(--bg); color: var(--text-primary);
   min-height: 100vh; padding: 2rem 1rem 4rem;
 }
-.container { max-width: 760px; margin: 0 auto; }
+.container { max-width: 820px; margin: 0 auto; }
 .page-title { font-size: 19px; font-weight: 600; margin-bottom: 3px; letter-spacing: -0.3px; }
 .page-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 1.5rem; }
 
@@ -126,7 +128,7 @@ body {
 
 /* ---- RESULT ---- */
 .result-layout {
-  display: grid; grid-template-columns: 260px 1fr;
+  display: grid; grid-template-columns: 320px 1fr;
   gap: 1.25rem; align-items: start; margin-bottom: 1.25rem;
 }
 .pie-wrap {
@@ -466,7 +468,7 @@ body {
       <div class="summary-grid" id="summaryGrid"></div>
       <div class="action-row">
         <button class="btn-sec" onclick="switchTab('form')"><i class="ti ti-edit"></i> 修改資料</button>
-        <button class="btn-pri" onclick="exportCard()"><i class="ti ti-download"></i> 匯出卡片</button>
+        <button class="btn-pri" onclick="exportPDF()"><i class="ti ti-file-type-pdf"></i> 匯出 PDF</button>
       </div>
     </div>
   </div>
@@ -657,7 +659,7 @@ function renderResult(cards, active, summary){
 function drawPie(active){
   const canvas=document.getElementById('pieChart');
   const dpr=window.devicePixelRatio||2;
-  const SIZE=210;
+  const SIZE=260;
   canvas.width=SIZE*dpr; canvas.height=SIZE*dpr;
   canvas.style.width=SIZE+'px'; canvas.style.height=SIZE+'px';
 
@@ -756,13 +758,38 @@ function drawPie(active){
   }).join('');
 }
 
-function exportCard(){
-  const html=document.documentElement.outerHTML;
-  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='保障卡片_'+(val('clientName')||'客戶')+'.html';
-  a.click();
+async function exportPDF(){
+  const { jsPDF } = window.jspdf;
+  const target = document.getElementById('resultView');
+
+  // temporarily hide action buttons while capturing
+  const actionRow = target.querySelector('.action-row');
+  actionRow.style.display = 'none';
+
+  const canvas = await html2canvas(target, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: '#f7f6f2',
+    logging: false,
+  });
+
+  actionRow.style.display = '';
+
+  const imgW = 210; // A4 width in mm
+  const imgH = (canvas.height / canvas.width) * imgW;
+  const pageH = 297; // A4 height in mm
+
+  const pdf = new jsPDF({ orientation: imgH > pageH ? 'p' : 'p', unit: 'mm', format: 'a4' });
+  const imgData = canvas.toDataURL('image/png');
+
+  // if content taller than A4, scale to fit; otherwise centre vertically
+  const finalH = Math.min(imgH, pageH - 20);
+  const finalW = (finalH / imgH) * imgW;
+  const xOffset = (210 - finalW) / 2;
+  const yOffset = 10;
+
+  pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalW, finalH);
+  pdf.save('保障卡片_' + (val('clientName') || '客戶') + '.pdf');
 }
 </script>
 </body>
