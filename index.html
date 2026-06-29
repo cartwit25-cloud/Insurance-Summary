@@ -255,7 +255,7 @@ body {
       </div>
       <div class="section-body" id="body-critical">
         <div class="field-row">
-          <div class="field"><label>重大傷病 保額</label><input type="text" id="critical-amount" placeholder="120萬" /></div>
+          <div class="field"><label>重大傷病 保額（萬）</label><input type="text" id="critical-amount" placeholder="120" /></div>
           <div class="field">
             <label>效期（歲）</label>
             <div class="period-wrap"><input type="number" id="critical-age" placeholder="75" min="0" max="120" /><span class="period-suffix">歲</span></div>
@@ -263,7 +263,7 @@ body {
           </div>
         </div>
         <div class="field-row">
-          <div class="field"><label>重大疾病 保額（選填）</label><input type="text" id="disease-amount" placeholder="50萬" /></div>
+          <div class="field"><label>重大疾病 保額（萬）</label><input type="text" id="disease-amount" placeholder="50" /></div>
           <div class="field">
             <label>效期（歲）</label>
             <div class="period-wrap"><input type="number" id="disease-age" placeholder="75" min="0" max="120" /><span class="period-suffix">歲</span></div>
@@ -280,11 +280,11 @@ body {
         <label class="toggle-switch"><input type="checkbox" id="tog-daily" checked onchange="toggleSection('daily')"><span class="toggle-slider"></span></label>
       </div>
       <div class="section-body" id="body-daily">
-        <div class="hint-row">住院日額 = 住院日額 + 住院看護 + 出院療養，系統自動加總</div>
+        <div class="hint-row">以百元為單位輸入，住院日額 = 住院日額 + 住院看護 + 出院療養，系統自動加總</div>
         <div class="field-row triple">
-          <div class="field"><label>住院日額</label><input type="number" id="daily-hosp" placeholder="1000" oninput="updateDailySum()" /></div>
-          <div class="field"><label>住院看護</label><input type="number" id="daily-nurse" placeholder="500" oninput="updateDailySum()" /></div>
-          <div class="field"><label>出院療養</label><input type="number" id="daily-post" placeholder="500" oninput="updateDailySum()" /></div>
+          <div class="field"><label>住院日額（百元）</label><input type="number" id="daily-hosp" placeholder="10" oninput="updateDailySum()" /></div>
+          <div class="field"><label>住院看護（百元）</label><input type="number" id="daily-nurse" placeholder="5" oninput="updateDailySum()" /></div>
+          <div class="field"><label>出院療養（百元）</label><input type="number" id="daily-post" placeholder="5" oninput="updateDailySum()" /></div>
         </div>
         <div class="sum-preview" id="daily-sum-preview">住院日額合計：0 /日</div>
         <div class="field-row">
@@ -334,11 +334,11 @@ body {
       </div>
       <div class="section-body" id="body-accident">
         <div class="field-row">
-          <div class="field"><label>身故 / 失能</label><input type="text" id="acc-death" placeholder="200萬" /></div>
-          <div class="field"><label>實支實付（/次）</label><input type="text" id="acc-reimb" placeholder="200,000" /></div>
+          <div class="field"><label>身故 / 失能（萬）</label><input type="text" id="acc-death" placeholder="200" /></div>
+          <div class="field"><label>意外實支實付（萬）</label><input type="text" id="acc-reimb" placeholder="20" /></div>
         </div>
         <div class="field-row">
-          <div class="field"><label>住院日額（/日）</label><input type="number" id="acc-daily" placeholder="2000" /></div>
+          <div class="field"><label>住院日額（百元）</label><input type="number" id="acc-daily" placeholder="20" /></div>
           <div class="field"><label>骨折（範圍）</label><input type="text" id="acc-fracture" placeholder="15,000～400,000" /></div>
         </div>
         <div class="field-row single">
@@ -358,18 +358,18 @@ body {
         <label class="toggle-switch"><input type="checkbox" id="tog-cancer" checked onchange="toggleSection('cancer')"><span class="toggle-slider"></span></label>
       </div>
       <div class="section-body" id="body-cancer">
-        <div class="hint-row">癌症住院日額 = 癌症住院 + 出院療養，系統自動加總</div>
+        <div class="hint-row">以百元為單位輸入，癌症住院日額 = 癌症住院 + 出院療養，系統自動加總</div>
         <div class="field-row">
-          <div class="field"><label>癌症住院（/日）</label><input type="number" id="cancer-hosp" placeholder="3600" oninput="updateCancerSum()" /></div>
-          <div class="field"><label>出院療養（/日）</label><input type="number" id="cancer-post" placeholder="1800" oninput="updateCancerSum()" /></div>
+          <div class="field"><label>癌症住院（百元）</label><input type="number" id="cancer-hosp" placeholder="36" oninput="updateCancerSum()" /></div>
+          <div class="field"><label>出院療養（百元）</label><input type="number" id="cancer-post" placeholder="18" oninput="updateCancerSum()" /></div>
         </div>
         <div class="sum-preview" id="cancer-sum-preview">癌症住院日額合計：0 /日</div>
         <div class="field-row">
-          <div class="field"><label>放射 / 化療（/次）</label><input type="text" id="cancer-chemo" placeholder="3,000" /></div>
-          <div class="field"><label>手術—重度（/次）</label><input type="text" id="cancer-op" placeholder="45,000" /></div>
+          <div class="field"><label>放射 / 化療（百元/次）</label><input type="text" id="cancer-chemo" placeholder="30" /></div>
+          <div class="field"><label>手術—重度（萬/次）</label><input type="text" id="cancer-op" placeholder="4.5" /></div>
         </div>
         <div class="field-row">
-          <div class="field"><label>生存照顧金（/年）</label><input type="text" id="cancer-care-amt" placeholder="60,000" /></div>
+          <div class="field"><label>生存照顧金（萬/年）</label><input type="text" id="cancer-care-amt" placeholder="6" /></div>
           <div class="field"><label>給付年數</label><input type="text" id="cancer-care-yrs" placeholder="8年" /></div>
         </div>
         <div class="field-row single">
@@ -390,8 +390,8 @@ body {
       </div>
       <div class="section-body disabled" id="body-longcare">
         <div class="field-row">
-          <div class="field"><label>一次金</label><input type="text" id="longcare-lump" placeholder="120萬" /></div>
-          <div class="field"><label>每月照顧金</label><input type="text" id="longcare-monthly" placeholder="30,000/月" /></div>
+          <div class="field"><label>一次金（萬）</label><input type="text" id="longcare-lump" placeholder="120" /></div>
+          <div class="field"><label>每月照顧金（萬）</label><input type="text" id="longcare-monthly" placeholder="3" /></div>
         </div>
         <div class="field-row single">
           <div class="field">
@@ -411,7 +411,7 @@ body {
       </div>
       <div class="section-body" id="body-life">
         <div class="field-row">
-          <div class="field"><label>保額</label><input type="text" id="life-amount" placeholder="120萬" /></div>
+          <div class="field"><label>保額（萬）</label><input type="text" id="life-amount" placeholder="120" /></div>
           <div class="field">
             <label>效期（歲）</label>
             <div class="period-wrap"><input type="number" id="life-age" placeholder="" min="0" max="120" disabled /><span class="period-suffix">歲</span></div>
@@ -486,6 +486,15 @@ function toggleSection(id) {
 }
 
 /* ── helpers ── */
+// 百元單位：輸入數字 × 100，輸出帶逗號格式
+function h(id){ const n=parseFloat(document.getElementById(id)?.value)||0; return n*100; }
+function hFmt(id){ const v=h(id); return v>0?(v).toLocaleString():null; }
+// 萬元單位：輸入數字，輸出「XX萬」
+function w(id){ return (document.getElementById(id)?.value||'').trim(); }
+function wFmt(id){ const v=w(id); return v?v+'萬':null; }
+// 萬元×10000，用於計算加總時
+function wNum(id){ return (parseFloat(document.getElementById(id)?.value)||0)*10000; }
+
 function val(id){ return (document.getElementById(id)?.value||'').trim(); }
 function num(id){ return parseFloat(document.getElementById(id)?.value)||0; }
 function isOn(id){ return document.getElementById('tog-'+id)?.checked||false; }
@@ -506,11 +515,11 @@ function getPeriod(prefix) {
 window.addEventListener('DOMContentLoaded',()=>toggleLifetime('life'));
 
 function updateDailySum(){
-  const s=num('daily-hosp')+num('daily-nurse')+num('daily-post');
+  const s=h('daily-hosp')+h('daily-nurse')+h('daily-post');
   document.getElementById('daily-sum-preview').textContent='住院日額合計：'+s.toLocaleString()+' /日';
 }
 function updateCancerSum(){
-  const s=num('cancer-hosp')+num('cancer-post');
+  const s=h('cancer-hosp')+h('cancer-post');
   document.getElementById('cancer-sum-preview').textContent='癌症住院日額合計：'+s.toLocaleString()+' /日';
 }
 
@@ -545,8 +554,9 @@ function generate(){
 
   if(isOn('critical')){
     const rows=[];
-    if(val('critical-amount')) rows.push({label:'重大傷病',value:val('critical-amount')});
-    if(val('disease-amount'))  rows.push({label:'重大疾病',value:val('disease-amount')});
+    const cf=wFmt('critical-amount'), df=wFmt('disease-amount');
+    if(cf) rows.push({label:'重大傷病',value:cf});
+    if(df) rows.push({label:'重大疾病',value:df});
     if(rows.length){
       const cp=getPeriod('critical'), dp=val('disease-amount')?getPeriod('disease'):'';
       const badge=(dp&&dp!==cp)?cp+' / '+dp:cp;
@@ -554,7 +564,7 @@ function generate(){
     }
   }
   if(isOn('daily')){
-    const s=num('daily-hosp')+num('daily-nurse')+num('daily-post');
+    const s=h('daily-hosp')+h('daily-nurse')+h('daily-post');
     const rows=[];
     if(s>0) rows.push({label:'住院日額',value:s.toLocaleString()+'/日'});
     const mn=val('daily-op-min'),mx=val('daily-op-max');
@@ -571,32 +581,35 @@ function generate(){
   }
   if(isOn('accident')){
     const rows=[];
-    if(val('acc-death'))    rows.push({label:'身故／失能',value:val('acc-death')});
-    if(val('acc-reimb'))    rows.push({label:'實支實付',value:val('acc-reimb')+'/次'});
-    const ad=num('acc-daily');
-    if(ad>0)                rows.push({label:'住院日額',value:ad.toLocaleString()+'/日'});
+    const adFmt=wFmt('acc-death'), arFmt=wFmt('acc-reimb'), adDaily=h('acc-daily');
+    if(adFmt)      rows.push({label:'身故／失能',value:adFmt});
+    if(arFmt)      rows.push({label:'實支實付',value:arFmt+'/次'});
+    if(adDaily>0)  rows.push({label:'住院日額',value:adDaily.toLocaleString()+'/日'});
     if(val('acc-fracture')) rows.push({label:'骨折',value:val('acc-fracture')});
     if(rows.length){cards.push({type:'accident',badge:getPeriod('acc'),rows});active.add('medical');}
   }
   if(isOn('cancer')){
-    const cs=num('cancer-hosp')+num('cancer-post');
+    const cs=h('cancer-hosp')+h('cancer-post');
     const rows=[];
     if(cs>0) rows.push({label:'住院日額',value:cs.toLocaleString()+'/日'});
-    if(val('cancer-chemo')) rows.push({label:'放射／化療',value:val('cancer-chemo')+'/次'});
-    if(val('cancer-op'))    rows.push({label:'手術（重度）',value:val('cancer-op')+'/次'});
-    const ca=val('cancer-care-amt'),cy=val('cancer-care-yrs');
-    if(ca) rows.push({label:'生存照顧金',value:ca+'/年'+(cy?'×'+cy:'')});
+    const chemo=val('cancer-chemo');
+    if(chemo) rows.push({label:'放射／化療',value:(parseFloat(chemo)*100).toLocaleString()+'/次'});
+    const copFmt=wFmt('cancer-op');
+    if(copFmt) rows.push({label:'手術（重度）',value:copFmt+'/次'});
+    const caFmt=wFmt('cancer-care-amt'), cy=val('cancer-care-yrs');
+    if(caFmt) rows.push({label:'生存照顧金',value:caFmt+'/年'+(cy?'×'+cy:'')});
     if(rows.length){cards.push({type:'cancer',badge:getPeriod('cancer'),rows});active.add('medical');}
   }
   if(isOn('longcare')){
     const rows=[];
-    if(val('longcare-lump'))    rows.push({label:'一次金',value:val('longcare-lump')});
-    if(val('longcare-monthly')) rows.push({label:'每月照顧金',value:val('longcare-monthly')});
+    const lfmt=wFmt('longcare-lump'), mfmt=wFmt('longcare-monthly');
+    if(lfmt) rows.push({label:'一次金',value:lfmt});
+    if(mfmt) rows.push({label:'每月照顧金',value:mfmt+'/月'});
     if(rows.length){cards.push({type:'longcare',badge:getPeriod('longcare'),rows});active.add('longcare');}
   }
   if(isOn('life')&&val('life-amount')){
-    cards.push({type:'life',badge:getPeriod('life'),rows:[{label:'保額',value:val('life-amount')}]});
-    active.add('life');
+    const lf=wFmt('life-amount');
+    if(lf){cards.push({type:'life',badge:getPeriod('life'),rows:[{label:'保額',value:lf}]});active.add('life');}
   }
   if(isOn('finance')&&val('finance-note')){
     cards.push({type:'finance',badge:'—',freetext:val('finance-note'),rows:[]});
@@ -608,9 +621,9 @@ function generate(){
   }
 
   /* ── summary: 更新規則 ── */
-  const dailyBase   = isOn('daily') ? num('daily-hosp')+num('daily-nurse')+num('daily-post') : 0;
-  const accExtra    = isOn('accident') ? num('acc-daily') : 0;
-  const cancerExtra = isOn('cancer')   ? num('cancer-hosp')+num('cancer-post') : 0;
+  const dailyBase   = isOn('daily') ? h('daily-hosp')+h('daily-nurse')+h('daily-post') : 0;
+  const accExtra    = isOn('accident') ? h('acc-daily') : 0;
+  const cancerExtra = isOn('cancer')   ? h('cancer-hosp')+h('cancer-post') : 0;
 
   const generalTotal = dailyBase;
   const accTotal     = dailyBase + accExtra;      // 意外住院 = 一般 + 意外日額
