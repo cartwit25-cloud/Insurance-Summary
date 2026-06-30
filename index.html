@@ -774,46 +774,58 @@ function drawPie(active){
 async function exportPDF(){
   const { jsPDF } = window.jspdf;
   const clientName = val('clientName') || '客戶';
+  const planDate   = val('planDate') || '';
 
-  // 建立一個包含標題+內容的臨時容器，全部用 html2canvas 截圖，完全不用 jsPDF 的文字
   const resultView = document.getElementById('resultView');
   const actionRow  = resultView.querySelector('.action-row');
   actionRow.style.display = 'none';
 
-  // 建立臨時 wrapper
+  // ── wrapper：白底＋留邊，模擬 A 版設計 ──
+  const W = resultView.offsetWidth;
   const wrapper = document.createElement('div');
   wrapper.style.cssText = `
     position:fixed; left:-9999px; top:0;
-    width:${resultView.offsetWidth}px;
-    background:#f7f6f2;
+    width:${W}px;
+    background:#ffffff;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    padding: 0;
+    padding: 28px 32px 32px;
   `;
 
-  // 標題列
+  // ── 彩色頂條 ──
+  const bar = document.createElement('div');
+  bar.style.cssText = `
+    height: 5px;
+    border-radius: 3px;
+    background: linear-gradient(90deg,#a8c4de,#c0dac4,#f0c4cc,#d4c8e8,#ede8c0,#f5ceaf);
+    margin-bottom: 16px;
+  `;
+
+  // ── 標題（居中） ──
   const titleDiv = document.createElement('div');
   titleDiv.style.cssText = `
-    padding: 14px 0 10px 0;
-    font-size: 15px;
-    font-weight: 700;
-    color: #2a2a27;
-    border-bottom: 1px solid #c8c8c4;
-    margin-bottom: 14px;
+    text-align: center;
+    margin-bottom: 20px;
   `;
-  titleDiv.textContent = clientName + ' 的保單匯總報告';
+  const titleName = document.createElement('div');
+  titleName.style.cssText = `font-size:17px;font-weight:700;color:#2a2a27;`;
+  titleName.textContent = clientName + ' 的保單匯總報告';
+  const titleSub = document.createElement('div');
+  titleSub.style.cssText = `font-size:11px;color:#a8a79f;margin-top:3px;`;
+  titleSub.textContent = planDate ? '建議書日期 ' + planDate : '';
+  titleDiv.appendChild(titleName);
+  if (planDate) titleDiv.appendChild(titleSub);
 
-  // clone resultView content
+  // ── 細分隔線 ──
+  const hr = document.createElement('div');
+  hr.style.cssText = `height:0.5px;background:#e0dfda;margin-bottom:20px;`;
+
+  // ── clone 內容 ──
   const clone = resultView.cloneNode(true);
-  clone.style.padding = '0';
-  // hide action row inside clone too
+  clone.style.cssText = 'padding:0;background:transparent;';
   const cloneAction = clone.querySelector('.action-row');
   if (cloneAction) cloneAction.style.display = 'none';
 
-  wrapper.appendChild(titleDiv);
-  wrapper.appendChild(clone);
-  document.body.appendChild(wrapper);
-
-  // 重新繪製 pie chart 到 clone 的 canvas（html2canvas 無法截 canvas 內容）
+  // 把 pie canvas 畫到 clone
   const origCanvas = document.getElementById('pieChart');
   const cloneCanvas = clone.querySelector('#pieChart');
   if (origCanvas && cloneCanvas) {
@@ -824,29 +836,36 @@ async function exportPDF(){
     cloneCanvas.getContext('2d').drawImage(origCanvas, 0, 0);
   }
 
+  wrapper.appendChild(bar);
+  wrapper.appendChild(titleDiv);
+  wrapper.appendChild(hr);
+  wrapper.appendChild(clone);
+  document.body.appendChild(wrapper);
+
   const canvas = await html2canvas(wrapper, {
     scale: 2,
     useCORS: true,
-    backgroundColor: '#f7f6f2',
+    backgroundColor: '#ffffff',
     logging: false,
   });
 
   document.body.removeChild(wrapper);
   actionRow.style.display = '';
 
-  // 放入 A4 PDF
+  // ── 放入 A4，四邊留白 ──
   const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
   const pageW = 210, pageH = 297;
-  const margin = 14;
+  const margin = 12;
   const availW = pageW - margin * 2;
   const availH = pageH - margin * 2;
   const imgRatio = canvas.height / canvas.width;
   const imgH = imgRatio * availW;
   const finalH = Math.min(imgH, availH);
   const finalW = (finalH / imgH) * availW;
-  const xOffset = margin + (availW - finalW) / 2;
+  const xOff = margin + (availW - finalW) / 2;
+  const yOff = 18; // 頂部固定 18mm，靠上對齊
 
-  pdf.addImage(canvas.toDataURL('image/png'), 'PNG', xOffset, margin, finalW, finalH);
+  pdf.addImage(canvas.toDataURL('image/png'), 'PNG', xOff, yOff, finalW, finalH);
   pdf.save(clientName + '的保單匯總報告.pdf');
 }
 </script>
